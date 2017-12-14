@@ -15,7 +15,7 @@ import java.util.Date;
  */
 public class ClientThread extends Thread {
     public static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMddHHmmss");
-    public static final String FILE_FORMAT = "BMP";
+    public static final String FILE_FORMAT = "JPEG";
     protected Socket socket;
     protected String name;
     protected BufferedInputStream in;
@@ -41,10 +41,11 @@ public class ClientThread extends Thread {
                 else if(ByteHelper.equal(input, Dictionary.NAME))
                     readName();
                 else if(ByteHelper.equal(input, Dictionary.STOP)){
+                    confirm();
                     socket.close();
                     return;
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
                 return;
             }
@@ -67,14 +68,18 @@ public class ClientThread extends Thread {
         return ByteBuffer.wrap(lengthBytes).getInt();
     }
 
-    private void readFrame() throws IOException {
+    private void readFrame() throws Exception {
         int length = readBytesLength();
         byte[] frameBytes = new byte[length];
         in.read(frameBytes, 0, length);
         confirm();
-        BufferedImage image = ImageIO.read( new ByteArrayInputStream(frameBytes) );
+        BufferedImage image = ImageIO.read( new ByteArrayInputStream(frameBytes));
+        File dir = new File(name);
+        if(!dir.exists())
+            if(!new File(name).mkdirs())
+                throw new Exception("file during creating file");
         ImageIO.write(image, FILE_FORMAT, new File(name + "/" + DATE_FORMAT.format(new Date()) + "." + FILE_FORMAT));
-        log("new frame has been read");
+        log("new frame has been read and saved");
     }
 
     private void writeMessage(byte[] message) throws IOException {
