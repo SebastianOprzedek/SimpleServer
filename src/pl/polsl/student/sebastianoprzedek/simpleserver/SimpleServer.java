@@ -1,9 +1,6 @@
 package pl.polsl.student.sebastianoprzedek.simpleserver;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -16,36 +13,25 @@ public class SimpleServer {
     }
 
     public void start() throws Exception{
-
-        System.out.println("Aaaa");
         ServerSocket serverSocket = null;
         try {
             serverSocket = new ServerSocket(4444);
+            System.out.println("Server started on port 4444");
         } catch (IOException e) {
             System.out.println("Could not listen on port: 4444.");
             System.exit(1);
         }
 
         Socket clientSocket = null;
-        try {
-            clientSocket = serverSocket.accept();
-            System.out.println("bbb");
-        } catch (IOException e) {
-            System.out.println("Accept failed.");
-            System.exit(1);
+        while(true) {
+            try {
+                clientSocket = serverSocket.accept();
+                System.out.println("Client connected at port " + clientSocket.getPort());
+                new ClientThread(clientSocket).start();
+            } catch (IOException e) {
+                System.out.println("Connection failed.");
+                e.printStackTrace();
+            }
         }
-
-        PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
-        BufferedReader in = new BufferedReader(
-                new InputStreamReader(
-                        clientSocket.getInputStream()));
-
-        out.print("ok");
-        out.close();
-        in.close();
-        clientSocket.close();
-        serverSocket.close();
-        System.out.println("cc");
-
     }
 }
