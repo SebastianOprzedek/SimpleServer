@@ -53,7 +53,7 @@ public class ClientThread extends Thread {
     }
 
     private void readName() throws IOException {
-        int length = readBytesLength();
+        int length = readInt();
         byte[] bytes = new byte[length];
         in.read(bytes, 0, length);
         confirm();
@@ -61,7 +61,7 @@ public class ClientThread extends Thread {
         log("new name: " + name);
     }
 
-    private int readBytesLength() throws IOException {
+    private int readInt() throws IOException {
         byte[] lengthBytes = new byte[4];
         in.read(lengthBytes, 0, 4);
         confirm();
@@ -69,16 +69,21 @@ public class ClientThread extends Thread {
     }
 
     private void readFrame() throws Exception {
-        int length = readBytesLength();
-        byte[] frameBytes = new byte[length];
-        in.read(frameBytes, 0, length);
-        confirm();
-        BufferedImage image = ImageIO.read( new ByteArrayInputStream(frameBytes));
+        int numberOfBatches = readInt();
+        byte[][] batchedBytes = new byte[numberOfBatches][];
+        for(int i =0; i< numberOfBatches; i++){
+            int length = readInt();
+            batchedBytes[i] = new byte[length];
+            in.read(batchedBytes[i], 0, length);
+            confirm();
+        }
+        byte[] frameBytes = ByteHelper.mergeBatches(batchedBytes);
         File dir = new File(name);
         if(!dir.exists())
             if(!new File(name).mkdirs())
                 throw new Exception("file during creating file");
-        ImageIO.write(image, FILE_FORMAT, new File(name + "/" + DATE_FORMAT.format(new Date()) + "." + FILE_FORMAT));
+        BufferedImage bufferedImage = ByteHelper.byteArrayToBufferedImage(frameBytes);
+        ImageIO.write(bufferedImage, "jpg", new File(name + "/" + DATE_FORMAT.format(new Date()) + "." + FILE_FORMAT));
         log("new frame has been read and saved");
     }
 
