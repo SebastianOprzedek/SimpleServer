@@ -43,6 +43,7 @@ public class ClientThread extends Thread {
                 else if(ByteHelper.equal(input, Dictionary.STOP)){
                     confirm();
                     socket.close();
+                    log("closing socket on STOP message");
                     return;
                 }
             } catch (Exception e) {
