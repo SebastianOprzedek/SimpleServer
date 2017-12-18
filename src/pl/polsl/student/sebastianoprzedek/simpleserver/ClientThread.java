@@ -14,7 +14,7 @@ import java.util.Date;
  * Created by Sebastian Oprzędek on 14.12.2017.
  */
 public class ClientThread extends Thread {
-    public static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMddHHmmss");
+    public static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMddHHmmssSSS");
     public static final String FILE_FORMAT = "JPEG";
     protected Socket socket;
     protected String name;
