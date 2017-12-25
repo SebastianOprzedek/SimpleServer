@@ -29,7 +29,6 @@ public class ClientThread extends Thread {
         try {
             in = new BufferedInputStream(socket.getInputStream());
             out = new DataOutputStream(socket.getOutputStream());
-            confirm();
         } catch (IOException e) {
             return;
         }
@@ -38,6 +37,8 @@ public class ClientThread extends Thread {
                 byte[] input = readMessage();
                 if(ByteHelper.equal(input, Dictionary.JPEG_HEADER))
                     readFrame();
+                else if(ByteHelper.equal(input, Dictionary.FILE_HEADER))
+                    readFile();
                 else if(ByteHelper.equal(input, Dictionary.NAME))
                     readName();
                 else if(ByteHelper.equal(input, Dictionary.STOP)){
@@ -69,23 +70,51 @@ public class ClientThread extends Thread {
         return ByteBuffer.wrap(lengthBytes).getInt();
     }
 
-    private void readFrame() throws Exception {
+    private byte[] readByteArray() throws IOException {
+        int length = readInt();
+        byte[] bytes = new byte[length];
+        in.read(bytes, 0, length);
+        confirm();
+        return bytes;
+    }
+
+    private byte[] readBatchedBytes() throws Exception {
         int numberOfBatches = readInt();
         byte[][] batchedBytes = new byte[numberOfBatches][];
-        for(int i =0; i< numberOfBatches; i++){
-            int length = readInt();
-            batchedBytes[i] = new byte[length];
-            in.read(batchedBytes[i], 0, length);
-            confirm();
-        }
-        byte[] frameBytes = ByteHelper.mergeBatches(batchedBytes);
+        for(int i =0; i< numberOfBatches; i++)
+            batchedBytes[i] = readByteArray();
+        return ByteHelper.mergeBatches(batchedBytes);
+    }
+
+    private void readFrame() throws Exception {
+        byte[] frameBytes = readBatchedBytes();
         File dir = new File(name);
         if(!dir.exists())
             if(!new File(name).mkdirs())
                 throw new Exception("file during creating file");
         BufferedImage bufferedImage = ByteHelper.byteArrayToBufferedImage(frameBytes);
-        ImageIO.write(bufferedImage, "jpg", new File(name + "/" + DATE_FORMAT.format(new Date()) + "." + FILE_FORMAT));
+        ImageIO.write(bufferedImage, "jpg", new File(name + "/" + getTimestamp() + getExtension()));
         log("new frame has been read and saved");
+    }
+
+    private String getExtension() {
+        return "." + FILE_FORMAT;
+    }
+
+    private String getTimestamp() {
+        return DATE_FORMAT.format(new Date());
+    }
+
+    private void readFile() throws Exception {
+        log("Reading file started");
+        byte[] fileBytes = readBatchedBytes();
+        FileOutputStream stream = new FileOutputStream(getTimestamp() + " " + name);
+        try {
+            stream.write(fileBytes);
+        } finally {
+            stream.close();
+        }
+        log("Reading file finished");
     }
 
     private void writeMessage(byte[] message) throws IOException {
