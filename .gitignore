@@ -47,3 +47,14 @@ com_crashlytics_export_strings.xml
 crashlytics.properties
 crashlytics-build.properties
 fabric.properties
+
+# SimpleServer dedicated:
+# Images:
+*.jpg
+*.jpeg
+*.png
+*.bmp
+# Videos:
+*.mjpeg
+*.mp4
+*.avi

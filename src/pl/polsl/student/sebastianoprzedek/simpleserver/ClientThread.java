@@ -1,6 +1,8 @@
 package pl.polsl.student.sebastianoprzedek.simpleserver;
 
 import pl.polsl.student.sebastianoprzedek.common.helper.ByteHelper;
+import pl.polsl.student.sebastianoprzedek.simpleserver.service.FrameService;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -108,13 +110,18 @@ public class ClientThread extends Thread {
     private void readFile() throws Exception {
         log("Reading file started");
         byte[] fileBytes = readBatchedBytes();
-        FileOutputStream stream = new FileOutputStream(getTimestamp() + " " + name);
+        String filename = getTimestamp() + " " + name;
+        FileOutputStream stream = new FileOutputStream(filename);
         try {
             stream.write(fileBytes);
         } finally {
             stream.close();
         }
         log("Reading file finished");
+        log("Splitting into frames...");
+        new FrameService(filename, name).saveFrames();
+        log("Splitting into frames finished");
+
     }
 
     private void writeMessage(byte[] message) throws IOException {
