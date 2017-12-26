@@ -1,4 +1,4 @@
-package pl.polsl.student.sebastianoprzedek.common.helper;
+package pl.polsl.student.sebastianoprzedek.desktop.common.helper;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
@@ -102,7 +102,6 @@ public class ByteHelper {
                     ous.close();
             } catch (IOException e) {
             }
-
             try {
                 if (ios != null)
                     ios.close();

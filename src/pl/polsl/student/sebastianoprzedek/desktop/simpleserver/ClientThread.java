@@ -1,8 +1,7 @@
-package pl.polsl.student.sebastianoprzedek.simpleserver;
+package pl.polsl.student.sebastianoprzedek.desktop.simpleserver;
 
-import pl.polsl.student.sebastianoprzedek.common.helper.ByteHelper;
-import pl.polsl.student.sebastianoprzedek.simpleserver.service.FrameService;
-
+import pl.polsl.student.sebastianoprzedek.desktop.common.helper.ByteHelper;
+import pl.polsl.student.sebastianoprzedek.desktop.simpleserver.service.FrameService;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;

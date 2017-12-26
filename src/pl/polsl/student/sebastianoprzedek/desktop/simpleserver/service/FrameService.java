@@ -1,8 +1,7 @@
-package pl.polsl.student.sebastianoprzedek.simpleserver.service;
+package pl.polsl.student.sebastianoprzedek.desktop.simpleserver.service;
 
 import java.io.File;
 import java.io.IOException;
-
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -32,18 +31,15 @@ public class FrameService {
 
     public void saveFrames(){
         new File(prefix).mkdirs();
-        try {
-            int i = 0;
-            while (videoCapture.isOpened()) {
-                Mat image = new Mat();
-                videoCapture.read(image);
-                if(image.empty()) break;
-                Imgproc.putText(image, "" + i, new Point(10, 450), 0, 1, new Scalar(0, 0, 255));
-                String file = prefix + "/" + i + ".jpg";
-                Imgcodecs.imwrite(file, image);
-                i++;
-            }
+        int i = 0;
+        while (videoCapture.isOpened()) {
+            Mat image = new Mat();
+            videoCapture.read(image);
+            if(image.empty()) break;
+            Imgproc.putText(image, "" + i, new Point(10, 450), 0, 1, new Scalar(0, 0, 255));
+            String file = prefix + "/" + i + ".jpg";
+            Imgcodecs.imwrite(file, image);
+            i++;
         }
-        catch(Exception e){}
     }
 }

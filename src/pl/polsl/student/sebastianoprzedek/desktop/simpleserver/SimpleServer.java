@@ -1,4 +1,4 @@
-package pl.polsl.student.sebastianoprzedek.simpleserver;
+package pl.polsl.student.sebastianoprzedek.desktop.simpleserver;
 
 import java.io.IOException;
 import java.net.ServerSocket;

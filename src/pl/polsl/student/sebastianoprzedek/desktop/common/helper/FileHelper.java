@@ -1,4 +1,4 @@
-package pl.polsl.student.sebastianoprzedek.common.helper;
+package pl.polsl.student.sebastianoprzedek.desktop.common.helper;
 
 import java.io.File;
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package pl.polsl.student.sebastianoprzedek.simpleserver;
+package pl.polsl.student.sebastianoprzedek.desktop.simpleserver;
 
 /**
  * Created by Sebastian Oprzędek on 14.12.2017.
