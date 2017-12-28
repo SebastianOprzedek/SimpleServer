@@ -49,7 +49,7 @@ public class ClientThread extends Thread {
                     return;
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                log(e.getMessage());
                 return;
             }
         }
@@ -82,9 +82,11 @@ public class ClientThread extends Thread {
     private byte[] readBatchedBytes() throws Exception {
         int numberOfBatches = readInt();
         byte[][] batchedBytes = new byte[numberOfBatches][];
-        for(int i =0; i< numberOfBatches; i++)
+        batchedBytes[0] = readByteArray();
+        int defaultBatchLength = batchedBytes[0].length;
+        for(int i =1; i< numberOfBatches; i++)
             batchedBytes[i] = readByteArray();
-        return ByteHelper.mergeBatches(batchedBytes);
+        return ByteHelper.mergeBatches(defaultBatchLength, numberOfBatches, batchedBytes);
     }
 
     private void readFrame() throws Exception {
