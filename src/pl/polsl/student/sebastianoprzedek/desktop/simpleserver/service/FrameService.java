@@ -2,6 +2,9 @@ package pl.polsl.student.sebastianoprzedek.desktop.simpleserver.service;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -15,14 +18,18 @@ import org.opencv.videoio.VideoCapture;
  */
 
 public class FrameService {
-
+    public static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMddHHmmssSSS");
     VideoCapture videoCapture;
     String prefix;
 
     public FrameService(String file, String prefix) throws Exception{
         System.load(System.getProperty("user.dir") + "/lib/x64/" + Core.NATIVE_LIBRARY_NAME + ".dll");
         this.videoCapture = new VideoCapture(file);
-        this.prefix = prefix;
+        this.prefix = getTimestamp() + " " + prefix;
+    }
+
+    private String getTimestamp() {
+        return DATE_FORMAT.format(new Date());
     }
 
     public void closeService() throws IOException{
