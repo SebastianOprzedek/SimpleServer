@@ -25,6 +25,13 @@ public class ByteHelper {
         return byteList;
     }
 
+    public static byte[] byteListToArray(List<Byte> byteList){
+        byte[] bytes = new byte[byteList.size()];
+        for(int i=0; i<bytes.length; i++)
+            bytes[i] = byteList.get(i);
+        return bytes;
+    }
+
     public static Boolean equal(byte[] bytes1, byte[] bytes2){
         if(bytes1.length != bytes2.length) return false;
         for(int i=0; i< bytes1.length; i++)
@@ -93,9 +100,9 @@ public class ByteHelper {
     }
 
     public static byte[] fileToByteArray(File file) throws Exception {
-        if (file.length() > MAX_FILE_SIZE) {
-            throw new Exception("File too big: " + file.getName());
-        }
+//        if (file.length() > MAX_FILE_SIZE) {
+//            throw new Exception("File too big: " + file.getName());
+//        }
         ByteArrayOutputStream ous = null;
         InputStream ios = null;
         try {

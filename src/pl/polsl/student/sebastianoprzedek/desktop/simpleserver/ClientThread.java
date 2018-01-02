@@ -9,7 +9,9 @@ import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Sebastian Oprzędek on 14.12.2017.
@@ -73,6 +75,9 @@ public class ClientThread extends Thread {
 
     private byte[] readByteArray() throws IOException {
         int length = readInt();
+        if(length == 0) {
+            return null;
+        }
         byte[] bytes = new byte[length];
         in.read(bytes, 0, length);
         confirm();
@@ -87,6 +92,16 @@ public class ClientThread extends Thread {
         for(int i =1; i< numberOfBatches; i++)
             batchedBytes[i] = readByteArray();
         return ByteHelper.mergeBatches(defaultBatchLength, numberOfBatches, batchedBytes);
+    }
+
+    private byte[] readFileBytes() throws Exception {
+        List<Byte> bytes = new ArrayList<>();
+        while(true) {
+            byte[] byteArray = readByteArray();
+            if (byteArray == null) break;
+            bytes.addAll(ByteHelper.byteArrayToList(byteArray));
+        }
+        return ByteHelper.byteListToArray(bytes);
     }
 
     private void readFrame() throws Exception {
@@ -110,7 +125,7 @@ public class ClientThread extends Thread {
 
     private void readFile() throws Exception {
         log("Reading file started");
-        byte[] fileBytes = readBatchedBytes();
+        byte[] fileBytes = readFileBytes();
         String filename = getTimestamp() + " " + name;
         FileOutputStream stream = new FileOutputStream(filename);
         try {
